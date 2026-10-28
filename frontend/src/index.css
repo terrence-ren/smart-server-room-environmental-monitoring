@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "DM Sans", "Aptos", sans-serif;
+  color: #1c2938;
+  background: #f2f6fa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  color-scheme: light;
+
+  --ink: #1c2938;
+  --muted: #737e8b;
+  --line: #dfe5ed;
+  --surface: #ffffff;
+  --canvas: #f2f6fa;
+  --forest: #14263b;
+  --forest-soft: #233b56;
+  --green: #176fc1;
+  --green-wash: #e8f2fc;
+  --amber: #b46a11;
+  --amber-wash: #fbf1df;
+  --red: #bd463b;
+  --red-wash: #fbecea;
+  --teal: #1684b8;
+  --coral: #d15b3f;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #1684b8;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #c7e2fb;
+  color: #14263b;
+}
+
+#root {
+  min-height: 100vh;
+}

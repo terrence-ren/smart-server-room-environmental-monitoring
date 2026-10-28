@@ -1,0 +1,14 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.env
+**/.env
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.log
+npm-debug.log*
+backend/data/*.db
+backend/data/*.db-*
+/M5_Server_Monitor/secrets.h

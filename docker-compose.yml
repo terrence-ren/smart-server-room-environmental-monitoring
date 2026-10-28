@@ -1,0 +1,75 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      DATABASE_URL: /app/data/server-room.db
+      MQTT_BROKER_URL: "${MQTT_BROKER_URL:-mqtt://mqtt-broker:1883}"
+      MQTT_TOPIC: "${MQTT_TOPIC:-serverroom/sensors/data}"
+      TEMP_THRESHOLD_MIN: "${TEMP_THRESHOLD_MIN:-15}"
+      TEMP_THRESHOLD_MAX: "${TEMP_THRESHOLD_MAX:-28}"
+      HUMIDITY_THRESHOLD_MIN: "${HUMIDITY_THRESHOLD_MIN:-20}"
+      HUMIDITY_THRESHOLD_MAX: "${HUMIDITY_THRESHOLD_MAX:-70}"
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
+      TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
+    ports:
+      - "${BACKEND_PORT:-5001}:5000"
+    volumes:
+      - backend-data:/app/data
+    depends_on:
+      mqtt-broker:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:5000/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    networks:
+      - monitoring
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: same-origin
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD-SHELL, "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+    networks:
+      - monitoring
+
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqtt-data:/mosquitto/data
+    networks:
+      - monitoring
+
+volumes:
+  backend-data:
+  mqtt-data:
+
+networks:
+  monitoring:
+    driver: bridge
